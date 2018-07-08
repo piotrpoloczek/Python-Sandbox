@@ -1,0 +1,90 @@
+#Author Paweł Poloczek, Piotr Poloczek
+from tkinter import filedialog
+from tkinter import *
+import re
+
+class GUI(Frame):
+
+	def __init__(self,master):
+		Frame.__init__(self, master)
+		self.pack()
+		master.minsize(width=480, height=320)
+		
+		
+        
+		def open_file():
+			file_name = filedialog.askopenfilename(filetypes = [("Text files", "*.txt"), ("All files", "*.*")])
+			file_content = open(file_name, 'r', encoding = 'iso-8859-1')
+			file_lines = file_content.readlines()
+			return file_lines
+			
+		def key(event):
+			kp = repr(event.char)
+			print ("pressed", kp)
+			return kp
+
+			
+		def callback(event):
+			self.focus_set()
+			print("cliked at", event.x, event.y)
+			
+			
+		def open_file_window():
+			
+			self.text = Text(self, bg = 'white', fg = 'black')
+			lines = open_file()
+			i = 0
+			for line in lines:
+				self.text.insert(END, "N" + str(i) + " " + line)
+				i = i + 10
+				
+			self.text.pack()
+			
+			self.text.bind("<Button-1>", callback)
+			self.text.bind("<Key>", key)
+			
+			key_value = lambda: self.text.bind("<Key>", key)
+			print(key_value)
+      
+      # check if user click the enter
+			"""
+			if key == "\n":
+				print(self.text.current)
+				self.text.insert(self.text.current, "this is new line")
+			"""
+			
+		def find_x(text_lines):
+			regex_for_x = re.compile(r'X\D*\d*\W*')
+			x_values = {}
+			
+			for i, line in enumerate(text_lines):
+				if len(line.strip()) == 0:
+					continue
+					
+				if 'X' in line:
+					x_search = regex_for_x.search(line)
+					search_value = x_search.group()
+					
+					if len(search_value.strip()) !=0:
+						x_values[i] = search_value.strip()
+						
+			return x_values
+			
+			
+		def insert_menubar():
+			menu = Menu(self.master)
+			self.master.config(menu = menu)
+			file_bar = Menu(menu, tearoff = 0)
+			file_bar.add_command(label = "Open", command = open_file_window)
+			menu.add_cascade(label = "File", menu = file_bar)
+		
+		
+		insert_menubar()
+		
+
+
+if __name__ == "__main__":
+    tk = Tk()
+    tk.wm_title("ArmorLab App")
+    guiFrame = GUI(tk)
+    guiFrame.mainloop()
