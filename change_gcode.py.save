@@ -1,0 +1,47 @@
+import re
+
+gcode_regex_x = re.compile(r'X\D*\d*\W*')
+gcode_regex_z = re.compile(r'Z\D*\d*\W*')
+x_dimension_regex = re.compile(r'\d*\W\d*')
+first_letters_regex = re.compile(r'[G]\d*')
+gcode_regex_none_z = re.compile(r'(!Z)')
+
+#filename = input("Please provide the name of the gcode files.")
+filename = "rolka.t"
+
+file_1 = open(filename, 'r')
+contents = file_1.readlines()
+file_1.close()
+	
+i = 1
+
+for line in contents:
+
+		
+		try:
+			mo_x = gcode_regex_x.search(line)
+		mo_first_words = first_letters_regex.search(line)
+		mo_z = gcode_regex_z.search(line)
+		mo_none_z = gcode_regex_none_z.search(line)
+		
+		print vars(mo_none_z.group())
+				
+		if mo_x.group() in line:
+			
+			mo_dimension_x = x_dimension_regex.search(mo_x.group())
+			
+			number_1 = float(mo_dimension_x.group())
+			number_2 = number_1 - 10.0
+				
+			if mo_z.group() in line:
+				print("this is the corectly line: ")
+				print(mo_first_words.group() + " X" + str(number_2) + " " + mo_z.group())
+	
+				
+	except AttributeError:
+		print("")
+
+
+	i = i + 1
+	
+input("Press the enter to exit: ")
